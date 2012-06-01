@@ -47,7 +47,7 @@
 
   SlimeSoccer.prototype.run = function()
   {
-	  var skipTicks = 100/ this.fps;
+	  var skipTicks = 1000/ this.fps;
 	  var nextGameTick = (new Date).getTime();
 	  var loops =0;
 
@@ -183,7 +183,7 @@
 		
 		this.radius = 7;
 
-	  this.bbox={minX: 7, maxX : 7, minY :7, maxY : 7};
+	  this.bbox={minX: this.radius, maxX : this.radius, minY :this.radius, maxY : this.radius};
   }
 
   Ball.prototype.update = function(){
@@ -215,9 +215,9 @@
 			if (coords.x!== undefined)
 			{
 				if(this.velX<=0.001) this.velX+=10;
-				else this.velX*=coords.x;
-				if(this.velY<=0.001) this.velX+=10;
-				else this.velY*=coords.y;
+				this.velX*=-coords.x;
+				if(this.velY<=0.001) this.velY+=10;
+				this.velY*=-coords.y;
 				break;
 			}
 		}
