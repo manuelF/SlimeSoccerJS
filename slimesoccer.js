@@ -67,7 +67,7 @@ Player.prototype.draw = function(ctx)
 
 Player.prototype.update = function()
 {
-	var accelstep = 1.09;
+	var accelstep = 1.19;
 	this.accelY+=0.045; //gravity
 	this.accelX=this.velX=0;
 	if(this.playerNumber==2)
@@ -116,6 +116,61 @@ Player.prototype.update = function()
 	
 };
 var Game = { fps: 120, width:700, height:600};
+
+function Ball(_x, _y)
+{	
+	this.x = _x;
+	this.y = _y;
+	this.color = "#FFFF00";
+	
+	this.accelX = 0;
+	this.accelY = 0;
+	this.velX = 0;
+	this.velY = 0;
+	
+	this.bbox={minX: 7, maxX : 7, minY :7, maxY : 7};
+}
+
+Ball.prototype.update=function()
+{
+	var accelstep = 0.75;
+	this.accelY+=0.045; //gravity
+	this.accelX=this.velX=0;
+	this.velX = this.velX + (0.5*((this.accelX)*(this.accelX)))*(this.accelX>0?1:-1);
+	this.x = this.x + this.velX;
+	
+	this.velY = this.velY + (0.5*((this.accelY)*(this.accelY)))*(this.accelY>0?1:-1);
+	this.y = this.y + this.velY;
+	var stopX = 0, stopY = 0;
+	//left boundary
+	if(this.x<this.bbox.minX) 			{this.x=this.bbox.minX; stopX=1;}
+	//right boundary
+	if(this.x>=Game.width-this.bbox.maxX) 	{this.x=Game.width-this.bbox.maxX; stopX=1;}
+	//up boundary
+	if(this.y<=this.bbox.minY) 			{this.y=this.bbox.minY; stopY=1;}
+	//down boundary
+	if(this.y>Game.height-this.bbox.maxY) 	{this.y=Game.height-this.bbox.maxY; stopY=1;}
+	
+	if(stopX==1)
+	{
+		this.velX= 0.0;
+		this.accelX=0.0;
+	}
+	if(stopY==1)
+	{
+		this.velY= 0.0;
+		this.accelY=0.0;	
+	}
+};
+Ball.prototype.draw=function(ctx)
+{
+	var radius = 7;
+	ctx.beginPath();        
+	ctx.arc(this.x, this.y, radius, 0, 2*Math.PI, true);
+	ctx.closePath();
+	ctx.fillStyle = this.color;
+	ctx.fill();
+};
 
 function drawField()
 {
@@ -181,16 +236,18 @@ Game.draw = (function() {
 	{
 		Game.players[i].draw(ctx);
 	}
+	Game.ball.draw(ctx);
 });
 
 Game.update = (
 function()
 {
-for(var i = 0; i<Game.players.length; i++)
+	for(var i = 0; i<Game.players.length; i++)
 	{
 		var player = Game.players[i];
 		player.update();
 	}
+	Game.ball.update();
 }
 );
 Game.fps = 60;
@@ -222,7 +279,7 @@ function init()
 	Game.players = new Array();
 	Game.players.push(new Player(100, baseline, 1, "#FF0000"));
 	Game.players.push(new Player(400, baseline, 2, "#0000DD"));
-	
+	Game.ball = new Ball(300, 300);
 	
 	Game._intervalId = setInterval(Game.run, 0);
 	return;
