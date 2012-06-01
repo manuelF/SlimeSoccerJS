@@ -104,19 +104,17 @@
   };
 
   Player.prototype.update = function(){
-	  var accelstep = 1.19;
-	  this.accelY+=0.045; //gravity
+	  this.accelY=0.9; //gravity
 	  this.accelX=this.velX=0;
 	  if(this.playerNumber==2){
 		  if(Key.isDown(Key.UP) && !this.isGoingUp){ 
-        this.accelY-=accelstep;this.isGoingUp=1;
+        this.velY=-15;this.isGoingUp=1;
       }
-		  //if(Key.isDown(Key.DOWN)) this.accelY+=accelstep;
-		  if(Key.isDown(Key.LEFT)) this.velX-=3;//this.accelX-=accelstep/5;
-		  if(Key.isDown(Key.RIGHT)) this.velX+=3;//this.accelX+=accelstep/5;
+		  if(Key.isDown(Key.LEFT)) this.velX-=3;
+		  if(Key.isDown(Key.RIGHT)) this.velX+=3;
 	  } else {
 		  if(this.playerNumber==1){
-			  if(Key.isDown(Key.W) && !this.isGoingUp){ this.accelY-=accelstep;this.isGoingUp=1;}
+			  if(Key.isDown(Key.W) && !this.isGoingUp){this.velY=-15;this.isGoingUp=1;}
 			  if(Key.isDown(Key.A)) this.velX-=3;
 			  if(Key.isDown(Key.D)) this.velX+=3;
 		  }
@@ -167,33 +165,43 @@
 
   Ball.prototype.update = function(){
 	  var accelstep = 0.75;
-	  this.accelY+=0.045; //gravity
-	  this.accelX=this.velX=0;
-	  this.velX = this.velX + (0.5*((this.accelX)*(this.accelX)))*(this.accelX>0?1:-1);
+	  this.accelY=0.9; //gravity
+	  this.accelX=0;
+	  //this.velX = this.velX + (0.5*((this.accelX)*(this.accelX)))*(this.accelX>0?1:-1);
 	  this.x = this.x + this.velX;
 	
 	  this.velY = this.velY + (0.5*((this.accelY)*(this.accelY)))*(this.accelY>0?1:-1);
 	  this.y = this.y + this.velY;
 	  var stopX = 0, stopY = 0;
 	  //left boundary
-	  if(this.x<this.bbox.minX) 			{this.x=this.bbox.minX; stopX=1;}
+	  if(this.x<this.bbox.minX) 			
+			{this.x=this.bbox.minX; stopX=1;}
 	  //right boundary
-	  if(this.x>=this.game.width-this.bbox.maxX) 	{this.x=this.game.width-this.bbox.maxX; stopX=1;}
+	  if(this.x>=this.game.width-this.bbox.maxX) 	
+			{this.x=this.game.width-this.bbox.maxX; stopX=1;}
 	  //up boundary
-	  if(this.y<=this.bbox.minY) 			{this.y=this.bbox.minY; stopY=1;}
+	  if(this.y<=this.bbox.minY) 			
+			{this.y=this.bbox.minY; stopY=1;}
 	  //down boundary
-	  if(this.y>this.game.height-this.bbox.maxY) 	{this.y=this.game.height-this.bbox.maxY; stopY=1;}
+	  if(this.y>this.game.height-this.bbox.maxY) 	
+			{this.y=this.game.height-this.bbox.maxY; stopY=1;}
 	
-	  if(stopX==1)
+	  if(stopX==1) //left or right wall
 	  {
-		  this.velX= 0.0;
-		  this.accelX=0.0;
+		  this.velX*= -1;		  
 	  }
-	  if(stopY==1)
-  	{
-		  this.velY= 0.0;
-		  this.accelY=0.0;	
-	  }
+		if(stopY==1) //floor or celing
+		{
+			this.velY*=-1;
+			
+			if(Math.abs(this.accelY)>0.001)
+			{
+				this.velX = ((Math.random())>0.5?1:(-1))*((Math.random()*10)+2);
+			}else
+			{
+				this.velX = 0;
+			}
+		}
   };
 
   Ball.prototype.draw = function()
