@@ -10,6 +10,9 @@ var Key = {
 	UP : 38,
 	RIGHT : 39,
 	DOWN : 40,
+	W: 87, //lowercase!
+	A: 65,  //lowercas
+	D: 68, //lowercase
 	
 	isDown: function(keyCode)
 	{ return this._pressed[keyCode];},
@@ -20,11 +23,14 @@ var Key = {
 	onKeyUp: function(event)
 	{ delete this._pressed[event.keyCode];},
 };
-function Player(_x, _y, _direction, _color)
+function Player(_x, _y, _number, _color)
 {
 	this.x = _x;
 	this.y = _y;
-	this.direction = _direction;
+	this.playerNumber = _number;
+	this.direction = 0;
+	if(_number==1) this.direction =1;
+	else this.direction = -1;
 	this.color = _color;
 	
 	this.accelX = 0;
@@ -64,11 +70,22 @@ Player.prototype.update = function()
 	var accelstep = 1.09;
 	this.accelY+=0.045; //gravity
 	this.accelX=this.velX=0;
-	if(Key.isDown(Key.UP) && !this.isGoingUp){ this.accelY-=accelstep;this.isGoingUp=1;}
-	//if(Key.isDown(Key.DOWN)) this.accelY+=accelstep;
-	if(Key.isDown(Key.LEFT)) this.velX-=3;//this.accelX-=accelstep/5;
-	if(Key.isDown(Key.RIGHT)) this.velX+=3;//this.accelX+=accelstep/5;
-
+	if(this.playerNumber==2)
+	{
+		if(Key.isDown(Key.UP) && !this.isGoingUp){ this.accelY-=accelstep;this.isGoingUp=1;}
+		//if(Key.isDown(Key.DOWN)) this.accelY+=accelstep;
+		if(Key.isDown(Key.LEFT)) this.velX-=3;//this.accelX-=accelstep/5;
+		if(Key.isDown(Key.RIGHT)) this.velX+=3;//this.accelX+=accelstep/5;
+	}
+	else
+	{
+		if(this.playerNumber==1)
+		{
+			if(Key.isDown(Key.W) && !this.isGoingUp){ this.accelY-=accelstep;this.isGoingUp=1;}
+			if(Key.isDown(Key.A)) this.velX-=3;
+			if(Key.isDown(Key.D)) this.velX+=3;
+		}
+	}
 	this.velX = this.velX + (0.5*((this.accelX)*(this.accelX)))*(this.accelX>0?1:-1);
 	this.x = this.x + this.velX;
 	
@@ -204,7 +221,8 @@ function init()
 	var baseline = height - 30;
 	Game.players = new Array();
 	Game.players.push(new Player(100, baseline, 1, "#FF0000"));
-	//Game.players.push(new Player(400, baseline, -1, "#0000FF"));
+	Game.players.push(new Player(400, baseline, 2, "#0000DD"));
+	
 	
 	Game._intervalId = setInterval(Game.run, 0);
 	return;
