@@ -1,4 +1,5 @@
-(function(){
+(function()
+{
 
 SlimeSoccer = function(id)
 {
@@ -18,11 +19,11 @@ SlimeSoccer = function(id)
 	this.ball = new Ball(300, 300, this);
 
 	var that = this;
-	this._intervalId = setInterval(function(){
+	this._intervalId = setInterval(function()
+	{
 		that.run();
 	}, 0);
 };
-
 
 SlimeSoccer.prototype.draw = function() 
 {
@@ -79,7 +80,11 @@ function Player(_x, _y, _number, _color, game)
 	this.velY = 0;
 	this.baseline = this.game.height - 30;
 
-	this.bbox={minX: 60, maxX : 60, minY :60, maxY : 0};
+	this.bbox=
+	{
+		minX: 60, maxX : 60, 
+		minY :60, maxY : 0
+	};
 	this.isGoingUp = 0;
 }
 
@@ -91,7 +96,6 @@ Player.prototype.draw = function(ctx)
 	var endAngle = Math.PI;
 	var clockwise = true;
 	var color ="#00FF00";
-
 
 	ctx.beginPath();
 	ctx.arc(this.x, this.y, radius, startAngle, endAngle, clockwise);
@@ -139,15 +143,28 @@ Player.prototype.update = function()
 
 	var stopX = 0, stopY = 0;
 	//left boundary
-	if(this.x<this.bbox.minX) 			{this.x=this.bbox.minX; stopX=1;}
+	if(this.x<this.bbox.minX)
+	{
+		this.x=this.bbox.minX; stopX=1;
+	}
 	//right boundary
-	if(this.x>=this.game.width-this.bbox.maxX) 	{this.x=this.game.width-this.bbox.maxX; stopX=1;}
+	if(this.x>=this.game.width-this.bbox.maxX)
+	{
+		this.x=this.game.width-this.bbox.maxX; stopX=1;
+	}
 	//up boundary
-	if(this.y<=this.bbox.minY) 			{this.y=this.bbox.minY; stopY=1;}
+	if(this.y<=this.bbox.minY)
+	{
+		this.y=this.bbox.minY; stopY=1;
+	}
 	//down boundary
-	if(this.y>this.game.height-this.bbox.maxY) 	{this.y=this.game.height-this.bbox.maxY; stopY=1;}
+	if(this.y>this.game.height-this.bbox.maxY)
+	{
+		this.y=this.game.height-this.bbox.maxY; stopY=1;
+	}
 
-	if(stopX==1){
+	if(stopX==1)
+	{
 		this.velX= 0.0;
 		this.accelX=0.0;
 	}
@@ -164,6 +181,7 @@ Player.prototype.hit = function(_x,_y)
 {
 	if(this.y<_y) //due to the assimetry of the slime, if ball is lower than slime, not touching
 		return {};
+		
 	var slime_radius = 60;
 	var abs= Math.abs;
 	var sq = function(x){return Math.pow(x,2);};
@@ -172,8 +190,8 @@ Player.prototype.hit = function(_x,_y)
 			
 	if(sq(abs(dx))+sq(abs(dy)) > 60*60) //outside radius, not  touching
 		return {};
+	
 	var angle = Math.atan((1.0*dy)/(1.0*dx));
-
 	var newcoords = {x:(Math.sin(angle)), y:(Math.cos(angle))};
 	
 	return newcoords; 	
@@ -193,7 +211,11 @@ function Ball(_x, _y, game)
 
 	this.radius = 7;
 
-	this.bbox={minX: this.radius, maxX : this.radius, minY :this.radius, maxY : this.radius};
+	this.bbox=
+	{
+		minX: this.radius, maxX: this.radius, 
+		minY: this.radius, maxY: this.radius
+	};
 }
 
 Ball.prototype.update = function()
@@ -296,7 +318,6 @@ var drawField = function()
 	ctx.stroke();
 
 	//goalpost 1
-
 	var goalpostHeight = 150;
 	ctx.beginPath();
 	ctx.moveTo(40,this.height-1);
